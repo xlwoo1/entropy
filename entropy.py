@@ -45,11 +45,14 @@ def maxTrans(abc):
 
 def process1(seg1,seg2,rgb1,rgb2):    # voxel_size = 0.003 # means 5cm for the dataset
 
-    pcdArrayS1,pcdArrayR1 = iVal(seg1,rgb1)
-    pcdArrayS2,pcdArrayR2 = iVal(seg2,rgb2)
+    label1,rgbArray1 = iVal(seg1,rgb1)
+    label2,rgbArray2 = iVal(seg2,rgb2)
+    
 
-    object11,object12,object13,object14,object15=fillObjectArray(pcdArrayS1,pcdArrayR1)
-    object21,object22,object23,object24,object25=fillObjectArray(pcdArrayS2,pcdArrayR2)
+    objectst1 = objectList(rgbArray1,label1)
+    objectst2 = objectList(rgbArray2,label2)
+    # object11,object12,object13,object14,object15=fillObjectArray(pcdArrayS1,pcdArrayR1)
+    # object21,object22,object23,object24,object25=fillObjectArray(pcdArrayS2,pcdArrayR2)
     # object31,object32,object33,object34,object35=fillObjectArray(pcdArrayS3,pcdArrayR3)
     # object41,object42,object43,object44,object45=fillObjectArray(pcdArrayS4,pcdArrayR4)
     # object51,object52,object53,object54,object55=fillObjectArray(pcdArrayS5,pcdArrayR5)
@@ -69,7 +72,7 @@ def process1(seg1,seg2,rgb1,rgb2):    # voxel_size = 0.003 # means 5cm for the d
     object24pc = array2PC(object24)
     object25pc = array2PC(object25)
   
-    voxel_size = 0.003 # means 5cm for the dataset
+    voxel_size = 0.02 # means 5cm for the dataset
 
 
     _,x1,y1,z1,t1 = base(voxel_size,object11pc,object21pc)
