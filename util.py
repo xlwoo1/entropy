@@ -10,17 +10,22 @@ def is_empty(any_structure):
         return True
 
 def iVal(pcd,pcd2):
-    temp = np.asarray(pcd.colors)[:,0]*255/16
-    label = temp.astype("uint8")
+    
+    # temp = np.asarray(pcd.colors)[:,0]*255/16
+    # label = temp.astype("uint8")
+    label = (np.asarray(pcd.colors)[:,0]*255/16).astype("uint8")
+
+    rgbcolor = np.asarray(pcd2.colors)
+    rgbpoints = np.asarray(pcd2.points)
+    rgbarray = np.concatenate((rgbcolor,rgbpoints),axis = 1)
+
+    # np_rgb = np.concatenate(
+    #     (np.asarray(pcd2.points),np.asarray(pcd2.colors)),axis = 1)
+
+    return label,rgbarray
 
 
-
-    rgbPCD = np.concatenate((pcd2.points,pcd2.colors),axis = 1)
-
-    return label,rgbPCD
-
-
-def objectList(rgb,label):
+def objectList(label,rgbarray):
     
 
     # rgbcolor = np.asarray(rgb.colors)
@@ -29,13 +34,13 @@ def objectList(rgb,label):
 
     # print(np.unique(npseg))
     labelcount = np.unique(label).astype("uint8")
-
-    newset = [[] for i in range(0, len(labelcount))]
+    
+    newset = [[] for i in range(len(labelcount))]
 #     print(newset)
-
+    # print(rgbarray)
     for id1,pixels in enumerate(label):
                 
-        newset[pixels-1].append(rgb[id1])
+        newset[pixels-1].append(rgbarray[id1])
 
                 
     return newset

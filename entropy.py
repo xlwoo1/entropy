@@ -47,10 +47,11 @@ def process1(seg1,seg2,rgb1,rgb2):    # voxel_size = 0.003 # means 5cm for the d
 
     label1,rgbArray1 = iVal(seg1,rgb1)
     label2,rgbArray2 = iVal(seg2,rgb2)
-    
+    voxel_size = 0.008 # means 5cm for the dataset
 
-    objectst1 = objectList(rgbArray1,label1)
-    objectst2 = objectList(rgbArray2,label2)
+
+    objectst1 = objectList(label1,rgbArray1)
+    objectst2 = objectList(label2,rgbArray2)
     # object11,object12,object13,object14,object15=fillObjectArray(pcdArrayS1,pcdArrayR1)
     # object21,object22,object23,object24,object25=fillObjectArray(pcdArrayS2,pcdArrayR2)
     # object31,object32,object33,object34,object35=fillObjectArray(pcdArrayS3,pcdArrayR3)
@@ -59,32 +60,48 @@ def process1(seg1,seg2,rgb1,rgb2):    # voxel_size = 0.003 # means 5cm for the d
     # object61,object62,object63,object64,object65=fillObjectArray(pcdArrayS6,pcdArrayR6)
     # object71,object72,object73,object74,object75=fillObjectArray(pcdArrayS7,pcdArrayR7)
 
-              
-    object11pc = array2PC(object11)
-    object12pc = array2PC(object12)
-    object13pc = array2PC(object13)
-    object14pc = array2PC(object14)
-    object15pc = array2PC(object15)
+    objectst1PC = [[] for i in range(len(objectst1))]
+    objectst2PC = [[] for i in range(len(objectst2))]
+    x = [[] for i in range(len(objectst1))]
+    y = [[] for i in range(len(objectst1))]
+    z = [[] for i in range(len(objectst1))]
+    t = [[] for i in range(len(objectst1))]
 
-    object21pc = array2PC(object21)
-    object22pc = array2PC(object22)
-    object23pc = array2PC(object23)
-    object24pc = array2PC(object24)
-    object25pc = array2PC(object25)
-  
-    voxel_size = 0.02 # means 5cm for the dataset
-
-
-    _,x1,y1,z1,t1 = base(voxel_size,object11pc,object21pc)
-    _,x2,y2,z2,t2 = base(voxel_size,object12pc,object22pc)
-    _,x3,y3,z3,t3 = base(voxel_size,object13pc,object23pc)
-    _,x4,y4,z4,t4 = base(voxel_size,object14pc,object24pc)
-    _,x5,y5,z5,t5 = base(voxel_size,object15pc,object25pc)
+    for i in range(len(objectst1)):
+        objectst1PC[i].append(array2PC(np.asarray(objectst1[i])))
+    # for i in range(len(objectst2)):
+        objectst2PC[i].append(array2PC(np.asarray(objectst2[i])))
+        _,x[i],y[i],z[i],t[i] = base(voxel_size,objectst1PC[i][0],objectst2PC[i][0])
     
-    x = np.asarray([x1,x2,x3,x4,x5])
-    y = np.asarray([y1,y2,y3,y4,y5])
-    z = np.asarray([z1,z2,z3,z4,z5])
-    t = np.concatenate([[t1],[t2],[t3],[t4],[t5]],axis = 0)
+    # xt = sum(x)
+    # yt = sum(y)
+    # zt = sum(z)
+    # tt = sum(t)
+   
+    # object11pc = array2PC(object11)
+    # object12pc = array2PC(object12)
+    # object13pc = array2PC(object13)
+    # object14pc = array2PC(object14)
+    # object15pc = array2PC(object15)
+
+    # object21pc = array2PC(object21)
+    # object22pc = array2PC(object22)
+    # object23pc = array2PC(object23)
+    # object24pc = array2PC(object24)
+    # object25pc = array2PC(object25)
+  
+
+
+    # _,x1,y1,z1,t1 = base(voxel_size,object11pc,object21pc)
+    # _,x2,y2,z2,t2 = base(voxel_size,object12pc,object22pc)
+    # _,x3,y3,z3,t3 = base(voxel_size,object13pc,object23pc)
+    # _,x4,y4,z4,t4 = base(voxel_size,object14pc,object24pc)
+    # _,x5,y5,z5,t5 = base(voxel_size,object15pc,object25pc)
+    
+    # x = np.asarray([x1,x2,x3,x4,x5])
+    # y = np.asarray([y1,y2,y3,y4,y5])
+    # z = np.asarray([z1,z2,z3,z4,z5])
+    # t = np.concatenate([[t1],[t2],[t3],[t4],[t5]],axis = 0)
     # print(x,y,z,t)
     return x,y,z,t
 
@@ -113,40 +130,49 @@ def entropyMain(x,y,z,t):
 if __name__ == "__main__":
     start = time.time()
 
-    seg1 = read_point_cloud("seg1.pcd")
-    seg2 = read_point_cloud("seg2.pcd")
-    seg3 = read_point_cloud("seg3.pcd")
-    seg4 = read_point_cloud("seg4.pcd")
-    seg5 = read_point_cloud("seg5.pcd")
-    seg6 = read_point_cloud("seg6.pcd")
-    seg7 = read_point_cloud("seg7.pcd")
+    seg1 = voxel_down_sample(read_point_cloud("./seg1.pcd"),0.008)
+    seg2 = voxel_down_sample(read_point_cloud("./seg2.pcd"),0.008)
+    seg3 = voxel_down_sample(read_point_cloud("./seg3.pcd"),0.008)
+    seg4 = voxel_down_sample(read_point_cloud("./seg4.pcd"),0.008)
+    seg5 = voxel_down_sample(read_point_cloud("./seg5.pcd"),0.008)
+    seg6 = voxel_down_sample(read_point_cloud("./seg6.pcd"),0.008)
+    seg7 = voxel_down_sample(read_point_cloud("./seg7.pcd"),0.008)
+    rgb1 = voxel_down_sample(read_point_cloud("./rgb1.pcd"),0.008)
+    rgb2 = voxel_down_sample(read_point_cloud("./rgb2.pcd"),0.008)
+    rgb3 = voxel_down_sample(read_point_cloud("./rgb3.pcd"),0.008)
+    rgb4 = voxel_down_sample(read_point_cloud("./rgb4.pcd"),0.008)
+    rgb5 = voxel_down_sample(read_point_cloud("./rgb5.pcd"),0.008)
+    rgb6 = voxel_down_sample(read_point_cloud("./rgb6.pcd"),0.008)
+    rgb7 = voxel_down_sample(read_point_cloud("./rgb7.pcd"),0.008)
 
-    # rgb0 = read_point_cloud("rgb0.pcd")
-    rgb1 = read_point_cloud("rgb1.pcd")
-    rgb2 = read_point_cloud("rgb2.pcd")
-    rgb3 = read_point_cloud("rgb3.pcd")
-    rgb4 = read_point_cloud("rgb4.pcd")
-    rgb5 = read_point_cloud("rgb5.pcd")
-    rgb6 = read_point_cloud("rgb6.pcd")
-    rgb7 = read_point_cloud("rgb7.pcd")
+    label1,rgbarray1 = iVal(seg1,rgb1)
 
-    pcdArrayS1,pcdArrayR1 = iVal(seg1,rgb1)
 
-    object11,object12,object13,object14,object15=fillObjectArray(pcdArrayS1,pcdArrayR1)
-    
-    object11pc = array2PC(object11)
-    object12pc = array2PC(object12)
-    object13pc = array2PC(object13)
-    object14pc = array2PC(object14)
-    object15pc = array2PC(object15)
+    objects = objectList(label1,rgbarray1)
+    # object11,object12,object13,object14,object15=fillObjectArray(pcdArrayS1,pcdArrayR1)
+    # print(np.asarray(objects).shape)
+    objectpc = [[] for i in range(len(objects))]
+    maxt = [[] for i in range(len(objects))]
+    for i in range(len(objects)):
+        # print(objects[i])
+        
+        objectpc[i] = array2PC(np.asarray(objects[i]))
+        maxt[i] = maxTrans(np.asarray(objectpc)[i])
+    # object11pc = array2PC(object11)
+    # object12pc = array2PC(object12)
+    # object13pc = array2PC(object13)
+    # object14pc = array2PC(object14)
+    # object15pc = array2PC(object15)
 
-    maxt1 = maxTrans(object11pc)
-    maxt2 = maxTrans(object12pc)
-    maxt3 = maxTrans(object13pc)
-    maxt4 = maxTrans(object14pc)
-    maxt5 = maxTrans(object15pc)
+    # maxt1 = maxTrans(object11pc)
+    # maxt2 = maxTrans(object12pc)
+    # maxt3 = maxTrans(object13pc)
+    # maxt4 = maxTrans(object14pc)
+    # maxt5 = maxTrans(object15pc)
            
-    maxt = np.concatenate([[maxt1],[maxt2],[maxt3],[maxt4],[maxt5]])
+    # maxt = np.concatenate([[maxt1],[maxt2],[maxt3],[maxt4],[maxt5]])
+
+
     x1,y1,z1,t1 = process1(seg1,seg2,rgb1,rgb2)
     x2,y2,z2,t2 = process1(seg2,seg3,rgb2,rgb3)
     x3,y3,z3,t3 = process1(seg3,seg4,rgb3,rgb4)
